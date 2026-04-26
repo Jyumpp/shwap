@@ -1,0 +1,149 @@
+{
+ "doctype": "DocType",
+ "name": "Lending Transaction",
+ "module": "Shwap",
+ "autoname": "naming_series:",
+ "title_field": "inventory_item",
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "LEND-.YYYY.-.#####",
+   "default": "LEND-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "inventory_item",
+   "fieldtype": "Link",
+   "label": "Inventory Item",
+   "options": "Inventory Item",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "listing",
+   "fieldtype": "Link",
+   "label": "Listing",
+   "options": "Listing"
+  },
+  {
+   "fieldname": "lender",
+   "fieldtype": "Link",
+   "label": "Lender",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "borrower",
+   "fieldtype": "Link",
+   "label": "Borrower",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nAvailable\nRequested\nApproved\nScheduled for pickup\nChecked out\nDue soon\nOverdue\nReturned pending inspection\nReturned accepted\nReturned damaged\nLost\nDispute opened\nClosed",
+   "default": "Requested",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "requested_start",
+   "fieldtype": "Date",
+   "label": "Requested Start"
+  },
+  {
+   "fieldname": "requested_end",
+   "fieldtype": "Date",
+   "label": "Requested End"
+  },
+  {
+   "fieldname": "approved_start",
+   "fieldtype": "Date",
+   "label": "Approved Start"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "return_date",
+   "fieldtype": "Date",
+   "label": "Return Date"
+  },
+  {
+   "fieldname": "pickup_location",
+   "fieldtype": "Data",
+   "label": "Pickup Location"
+  },
+  {
+   "fieldname": "return_location",
+   "fieldtype": "Data",
+   "label": "Return Location"
+  },
+  {
+   "fieldname": "deposit_amount",
+   "fieldtype": "Currency",
+   "label": "Deposit Amount"
+  },
+  {
+   "fieldname": "agreement",
+   "fieldtype": "Text",
+   "label": "Agreement"
+  },
+  {
+   "fieldname": "pre_lend_condition",
+   "fieldtype": "Text",
+   "label": "Pre-lend Condition"
+  },
+  {
+   "fieldname": "post_return_condition",
+   "fieldtype": "Text",
+   "label": "Post-return Condition"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "share": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1
+  },
+  {
+   "role": "Inventory Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "export": 1
+  },
+  {
+   "role": "Shwap User",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -1,0 +1,67 @@
+{
+ "doctype": "DocType",
+ "name": "Item Condition Log",
+ "module": "Shwap",
+ "autoname": "format:COND-{#####}",
+ "fields": [
+  {
+   "fieldname": "inventory_item",
+   "fieldtype": "Link",
+   "label": "Inventory Item",
+   "options": "Inventory Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "condition_rating",
+   "fieldtype": "Select",
+   "label": "Condition Rating",
+   "options": "\nExcellent\nGood\nFair\nPoor\nDamaged",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "condition_notes",
+   "fieldtype": "Text",
+   "label": "Condition Notes"
+  },
+  {
+   "fieldname": "logged_by",
+   "fieldtype": "Link",
+   "label": "Logged By",
+   "options": "User"
+  },
+  {
+   "fieldname": "logged_on",
+   "fieldtype": "Datetime",
+   "label": "Logged On"
+  },
+  {
+   "fieldname": "related_transaction",
+   "fieldtype": "Data",
+   "label": "Related Transaction"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Inventory Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Shwap User",
+   "read": 1,
+   "create": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC"
+}

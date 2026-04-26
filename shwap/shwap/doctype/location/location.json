@@ -1,0 +1,79 @@
+{
+ "doctype": "DocType",
+ "name": "Location",
+ "module": "Shwap",
+ "autoname": "field:location_name",
+ "title_field": "location_name",
+ "fields": [
+  {
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "label": "Location Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "location_type",
+   "fieldtype": "Select",
+   "label": "Location Type",
+   "options": "\nHouse\nGarage\nCloset\nStorage Bin\nRoom\nShelf\nBuilding\nOther",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "owner_user",
+   "fieldtype": "Link",
+   "label": "Owner User",
+   "options": "User"
+  },
+  {
+   "fieldname": "owner_group",
+   "fieldtype": "Link",
+   "label": "Owner Group",
+   "options": "Shwap Group"
+  },
+  {
+   "fieldname": "privacy_level",
+   "fieldtype": "Select",
+   "label": "Privacy Level",
+   "options": "\nExact private\nApproximate area shown\nPublic pickup area",
+   "default": "Exact private",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "parent_location",
+   "fieldtype": "Link",
+   "label": "Parent Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "address_or_area",
+   "fieldtype": "Small Text",
+   "label": "Address / Area"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "share": 1,
+   "print": 1,
+   "export": 1
+  },
+  {
+   "role": "Shwap User",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

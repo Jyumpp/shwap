@@ -1,0 +1,119 @@
+{
+ "doctype": "DocType",
+ "name": "Clothing Detail",
+ "module": "Shwap",
+ "autoname": "format:CLTH-{#####}",
+ "title_field": "inventory_item",
+ "fields": [
+  {
+   "fieldname": "inventory_item",
+   "fieldtype": "Link",
+   "label": "Inventory Item",
+   "options": "Inventory Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "garment_type",
+   "fieldtype": "Data",
+   "label": "Garment Type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "label_size",
+   "fieldtype": "Data",
+   "label": "Label Size"
+  },
+  {
+   "fieldname": "fit_category",
+   "fieldtype": "Select",
+   "label": "Fit Category",
+   "options": "\nFitted\nRegular\nRelaxed\nOversized"
+  },
+  {
+   "fieldname": "chest_bust",
+   "fieldtype": "Float",
+   "label": "Chest/Bust"
+  },
+  {
+   "fieldname": "waist",
+   "fieldtype": "Float",
+   "label": "Waist"
+  },
+  {
+   "fieldname": "hip",
+   "fieldtype": "Float",
+   "label": "Hip"
+  },
+  {
+   "fieldname": "shoulder_width",
+   "fieldtype": "Float",
+   "label": "Shoulder Width"
+  },
+  {
+   "fieldname": "sleeve_length",
+   "fieldtype": "Float",
+   "label": "Sleeve Length"
+  },
+  {
+   "fieldname": "inseam",
+   "fieldtype": "Float",
+   "label": "Inseam"
+  },
+  {
+   "fieldname": "fabric",
+   "fieldtype": "Data",
+   "label": "Fabric"
+  },
+  {
+   "fieldname": "stretch",
+   "fieldtype": "Select",
+   "label": "Stretch",
+   "options": "\nNone\nLow\nMedium\nHigh"
+  },
+  {
+   "fieldname": "color",
+   "fieldtype": "Data",
+   "label": "Color"
+  },
+  {
+   "fieldname": "pattern",
+   "fieldtype": "Data",
+   "label": "Pattern"
+  },
+  {
+   "fieldname": "care_instructions",
+   "fieldtype": "Small Text",
+   "label": "Care Instructions"
+  },
+  {
+   "fieldname": "alterations",
+   "fieldtype": "Small Text",
+   "label": "Alterations"
+  },
+  {
+   "fieldname": "fit_notes",
+   "fieldtype": "Text",
+   "label": "Fit Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Shwap User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

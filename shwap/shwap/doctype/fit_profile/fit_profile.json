@@ -1,0 +1,95 @@
+{
+ "doctype": "DocType",
+ "name": "Fit Profile",
+ "module": "Shwap",
+ "autoname": "field:profile_name",
+ "title_field": "profile_name",
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "profile_name",
+   "fieldtype": "Data",
+   "label": "Profile Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Float",
+   "label": "Height"
+  },
+  {
+   "fieldname": "shoulder_width",
+   "fieldtype": "Float",
+   "label": "Shoulder Width"
+  },
+  {
+   "fieldname": "chest_bust",
+   "fieldtype": "Float",
+   "label": "Chest/Bust"
+  },
+  {
+   "fieldname": "waist",
+   "fieldtype": "Float",
+   "label": "Waist"
+  },
+  {
+   "fieldname": "hip",
+   "fieldtype": "Float",
+   "label": "Hip"
+  },
+  {
+   "fieldname": "inseam",
+   "fieldtype": "Float",
+   "label": "Inseam"
+  },
+  {
+   "fieldname": "shoe_size",
+   "fieldtype": "Data",
+   "label": "Shoe Size"
+  },
+  {
+   "fieldname": "preferred_fit",
+   "fieldtype": "Select",
+   "label": "Preferred Fit",
+   "options": "\nFitted\nRelaxed\nOversized"
+  },
+  {
+   "fieldname": "privacy_level",
+   "fieldtype": "Select",
+   "label": "Privacy Level",
+   "options": "\nPrivate only\nShared for fit matching without exact measurements\nShared with specific users\nShared within group",
+   "default": "Private only"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Shwap User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

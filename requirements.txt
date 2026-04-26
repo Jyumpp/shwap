@@ -1,0 +1,2 @@
+# Frappe apps are installed inside a Bench environment.
+# Keep this file for additional app-level Python dependencies only.
