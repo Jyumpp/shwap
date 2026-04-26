@@ -13,9 +13,12 @@
   </header>
 
   <div class="portal-shell__content">
-    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+  {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-    <main class="portal-main">
+  <main class="portal-main">
+      {% set categories = initial_data.get("categories", []) %}
+      {% set locations = initial_data.get("locations", []) %}
+      {% set items = initial_data.get("items", []) %}
       <section class="portal-grid">
         <article class="portal-card">
           <h3>Quick Add Item</h3>
@@ -23,14 +26,14 @@
             <label>Item Name<input name="item_name" required></label>
             <label>Category
               <select name="category" required>
-                {% for category in initial_data.categories %}
+                {% for category in categories %}
                 <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
               </select>
             </label>
             <label>Location
               <select name="location" required>
-                {% for location in initial_data.locations %}
+                {% for location in locations %}
                 <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
               </select>
@@ -62,7 +65,7 @@
             <label>Location
               <select name="location">
                 <option value="">Any</option>
-                {% for location in initial_data.locations %}
+                {% for location in locations %}
                 <option value="{{ location }}">{{ location }}</option>
                 {% endfor %}
               </select>
@@ -78,7 +81,7 @@
           <table class="portal-table">
             <thead><tr><th>Item</th><th>Category</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
-              {% for item in initial_data.items %}
+              {% for item in items %}
               <tr>
                 <td><a href="/app/inventory-item/{{ item.name }}" target="_blank">{{ item.item_name }}</a></td>
                 <td>{{ item.category }}</td>

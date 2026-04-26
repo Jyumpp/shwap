@@ -13,23 +13,26 @@
   </header>
 
   <div class="portal-shell__content">
-    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+  {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-    <main class="portal-main">
+  <main class="portal-main">
+      {% set items = initial_data.get("items", []) %}
+      {% set users = initial_data.get("users", []) %}
+      {% set lending = initial_data.get("lending", []) %}
       <section class="portal-grid">
         <article class="portal-card">
           <h3>Start Lending</h3>
           <form id="lendingForm">
             <label>Item
               <select name="item" id="lendingItem" required>
-                {% for item in initial_data.items %}
+                {% for item in items %}
                 <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
                 {% endfor %}
               </select>
             </label>
             <label>Borrower
               <select name="borrower" required>
-                {% for user in initial_data.users %}
+                {% for user in users %}
                 <option value="{{ user }}">{{ user }}</option>
                 {% endfor %}
               </select>
@@ -46,7 +49,7 @@
         <table class="portal-table">
           <thead><tr><th>Item</th><th>Borrower</th><th>Status</th><th>Due</th><th>Actions</th></tr></thead>
           <tbody>
-            {% for tx in initial_data.lending %}
+            {% for tx in lending %}
             <tr>
               <td><a href="/app/lending-transaction/{{ tx.name }}" target="_blank">{{ tx.inventory_item }}</a></td>
               <td>{{ tx.borrower }}</td>

@@ -13,9 +13,12 @@
   </header>
 
   <div class="portal-shell__content">
-    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+  {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-    <main class="portal-main">
+  <main class="portal-main">
+      {% set items = initial_data.get("items", []) %}
+      {% set fit_profiles = initial_data.get("fit_profiles", []) %}
+      {% set clothing_details = initial_data.get("clothing_details", []) %}
       <section class="portal-grid">
         <article class="portal-card">
           <h3>Create Fit Profile</h3>
@@ -37,7 +40,7 @@
           <form id="clothingForm">
             <label>Inventory Item
               <select name="inventory_item" required>
-                {% for item in initial_data.items %}
+                {% for item in items %}
                 <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
                 {% endfor %}
               </select>
@@ -59,7 +62,7 @@
           <table class="portal-table">
             <thead><tr><th>Profile</th><th>Fit</th><th>Privacy</th></tr></thead>
             <tbody>
-              {% for profile in initial_data.fit_profiles %}
+              {% for profile in fit_profiles %}
               <tr>
                 <td><a href="/app/fit-profile/{{ profile.name }}" target="_blank">{{ profile.profile_name }}</a></td>
                 <td>{{ profile.preferred_fit or "-" }}</td>
@@ -77,7 +80,7 @@
           <table class="portal-table">
             <thead><tr><th>Item</th><th>Garment</th><th>Size</th><th>Waist</th><th>Inseam</th></tr></thead>
             <tbody>
-              {% for detail in initial_data.clothing_details %}
+              {% for detail in clothing_details %}
               <tr>
                 <td>{{ detail.inventory_item }}</td>
                 <td>{{ detail.garment_type }}</td>
@@ -98,14 +101,14 @@
         <form id="fitEstimateForm" class="portal-grid">
           <label>Clothing Detail
             <select name="clothing_detail" required>
-              {% for detail in initial_data.clothing_details %}
+              {% for detail in clothing_details %}
               <option value="{{ detail.name }}">{{ detail.inventory_item }} • {{ detail.garment_type }}</option>
               {% endfor %}
             </select>
           </label>
           <label>Fit Profile
             <select name="fit_profile" required>
-              {% for profile in initial_data.fit_profiles %}
+              {% for profile in fit_profiles %}
               <option value="{{ profile.name }}">{{ profile.profile_name }}</option>
               {% endfor %}
             </select>

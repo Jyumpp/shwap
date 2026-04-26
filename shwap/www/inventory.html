@@ -16,11 +16,12 @@
     {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
     <main class="portal-main">
+      {% set summary = initial_data.get("summary", {}) %}
       <section class="metric-grid">
-        <article class="metric"><strong>{{ initial_data.summary.total_items }}</strong><span>Total Items</span></article>
-        <article class="metric"><strong>{{ initial_data.summary.lent_out }}</strong><span>Lent Out</span></article>
-        <article class="metric"><strong>{{ initial_data.summary.active_listings }}</strong><span>Active Listings</span></article>
-        <article class="metric"><strong>{{ initial_data.summary.open_requests }}</strong><span>Open Requests</span></article>
+        <article class="metric"><strong>{{ summary.get("total_items", 0) }}</strong><span>Total Items</span></article>
+        <article class="metric"><strong>{{ summary.get("lent_out", 0) }}</strong><span>Lent Out</span></article>
+        <article class="metric"><strong>{{ summary.get("active_listings", 0) }}</strong><span>Active Listings</span></article>
+        <article class="metric"><strong>{{ summary.get("open_requests", 0) }}</strong><span>Open Requests</span></article>
       </section>
 
       <section class="dashboard-links">
@@ -39,4 +40,9 @@
 {% block style %}
 {{ super() }}
 <link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
 {% endblock %}

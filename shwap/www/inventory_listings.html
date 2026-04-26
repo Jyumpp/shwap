@@ -13,16 +13,18 @@
   </header>
 
   <div class="portal-shell__content">
-    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+  {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-    <main class="portal-main">
+  <main class="portal-main">
+      {% set items = initial_data.get("items", []) %}
+      {% set listings = initial_data.get("listings", []) %}
       <section class="portal-grid">
         <article class="portal-card">
           <h3>Create Listing</h3>
           <form id="listingForm">
             <label>Item
               <select name="item" id="listingItem" required>
-                {% for item in initial_data.items %}
+                {% for item in items %}
                 <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
                 {% endfor %}
               </select>
@@ -47,7 +49,7 @@
         <table class="portal-table">
           <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Price</th></tr></thead>
           <tbody>
-            {% for listing in initial_data.listings %}
+            {% for listing in listings %}
             <tr>
               <td><a href="/app/listing/{{ listing.name }}" target="_blank">{{ listing.title }}</a></td>
               <td>{{ listing.listing_type }}</td>

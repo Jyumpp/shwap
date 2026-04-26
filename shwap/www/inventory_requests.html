@@ -13,9 +13,11 @@
   </header>
 
   <div class="portal-shell__content">
-    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+  {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-    <main class="portal-main">
+  <main class="portal-main">
+      {% set categories = initial_data.get("categories", []) %}
+      {% set requests = initial_data.get("requests", []) %}
       <section class="portal-grid">
         <article class="portal-card">
           <h3>Create Wanted Request</h3>
@@ -29,7 +31,7 @@
             <label>Category
               <select name="category">
                 <option value="">Select</option>
-                {% for category in initial_data.categories %}
+                {% for category in categories %}
                 <option value="{{ category }}">{{ category }}</option>
                 {% endfor %}
               </select>
@@ -46,7 +48,7 @@
         <table class="portal-table">
           <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Budget</th></tr></thead>
           <tbody>
-            {% for req in initial_data.requests %}
+            {% for req in requests %}
             <tr>
               <td><a href="/app/wanted-request/{{ req.name }}" target="_blank">{{ req.title }}</a></td>
               <td>{{ req.request_type }}</td>
