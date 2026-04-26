@@ -25,8 +25,10 @@
   },
   {
    "fieldname": "item_type",
-   "fieldtype": "Data",
-   "label": "Item Type"
+   "fieldtype": "Select",
+   "label": "Item Type",
+   "options": "\nGeneral",
+   "allow_in_quick_entry": 1
   },
   {
    "fieldname": "category",

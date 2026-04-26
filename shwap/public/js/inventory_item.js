@@ -1,5 +1,72 @@
+const ITEM_TYPE_OPTIONS = {
+  tools: ["Power Tool", "Hand Tool", "Yard Tool", "Workshop Equipment"],
+  leisure: ["Sports Equipment", "Camping Gear", "Gaming Console", "Board Game", "Hobby Gear"],
+  clothing: ["Top", "Bottom", "Outerwear", "Shoe", "Accessory"],
+  electronics: ["Computer", "Phone", "Audio Device", "Camera", "Peripheral"],
+  household: ["Kitchen Item", "Furniture", "Appliance", "Storage"],
+  books_media: ["Book", "Movie", "Music", "Collectible"],
+  default: ["General"],
+};
+
+function normalizedCategory(category) {
+  const text = (category || "").toLowerCase();
+  if (text.includes("tool")) return "tools";
+  if (text.includes("leisure") || text.includes("sport") || text.includes("camp") || text.includes("game")) return "leisure";
+  if (text.includes("cloth") || text.includes("shoe") || text.includes("wear") || text.includes("accessor")) return "clothing";
+  if (text.includes("electronic") || text.includes("computer") || text.includes("phone")) return "electronics";
+  if (text.includes("household") || text.includes("kitchen") || text.includes("furniture")) return "household";
+  if (text.includes("book") || text.includes("media")) return "books_media";
+  return "default";
+}
+
+function applyCategoryOptions(frm) {
+  const categoryKey = normalizedCategory(frm.doc.category);
+  const options = ITEM_TYPE_OPTIONS[categoryKey] || ITEM_TYPE_OPTIONS.default;
+  frm.set_df_property("item_type", "options", ["", ...options].join("\n"));
+
+  if (frm.doc.item_type && !options.includes(frm.doc.item_type)) {
+    frm.set_value("item_type", "");
+  }
+}
+
+function addClothingDetailButton(frm) {
+  const isClothing = normalizedCategory(frm.doc.category) === "clothing";
+  if (!isClothing) return;
+
+  frm.add_custom_button(__("Manage Clothing Detail"), async () => {
+    if (frm.is_new()) {
+      frappe.msgprint(__("Save the Inventory Item first."));
+      return;
+    }
+
+    const existing = await frappe.db.get_value("Clothing Detail", { inventory_item: frm.doc.name }, "name");
+    const detailName = existing?.message?.name;
+
+    if (detailName) {
+      frappe.set_route("Form", "Clothing Detail", detailName);
+      return;
+    }
+
+    frappe.new_doc("Clothing Detail", {
+      inventory_item: frm.doc.name,
+      garment_type: frm.doc.item_type || "",
+      label_size: "",
+    });
+  });
+}
+
 frappe.ui.form.on("Inventory Item", {
+  setup(frm) {
+    applyCategoryOptions(frm);
+  },
+
+  category(frm) {
+    applyCategoryOptions(frm);
+  },
+
   refresh(frm) {
+    applyCategoryOptions(frm);
+
     if (frm.is_new()) {
       return;
     }
@@ -107,6 +174,8 @@ frappe.ui.form.on("Inventory Item", {
       }
       window.open(frm.doc.qr_payload, "_blank");
     });
+
+    addClothingDetailButton(frm);
   },
 
   before_save(frm) {

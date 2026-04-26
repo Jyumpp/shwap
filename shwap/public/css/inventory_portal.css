@@ -62,14 +62,16 @@
   margin-bottom: 1rem;
 }
 
-.portal-nav button {
+.portal-nav a {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--fg-color);
   padding: 0.45rem 0.75rem;
+  text-decoration: none;
+  color: inherit;
 }
 
-.portal-nav button.active {
+.portal-nav a.active {
   border-color: var(--primary);
   color: var(--primary);
   font-weight: 600;
@@ -108,22 +110,11 @@
   margin-top: 0.2rem;
 }
 
-.panel button {
-  margin-top: 0.5rem;
-}
-
 .panel-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
-}
-
-.refresh-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.25rem 0.6rem;
 }
 
 .table {
@@ -144,10 +135,6 @@
 }
 
 .action-btn {
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: transparent;
-  padding: 0.2rem 0.45rem;
   margin-right: 0.25rem;
 }
 

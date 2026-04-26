@@ -34,6 +34,9 @@ def validate_inventory_item(doc, _method):
     if not doc.current_holder:
         doc.current_holder = doc.owner_user
 
+    if not doc.item_type:
+        doc.item_type = "General"
+
     if not doc.qr_payload:
         doc.qr_payload = _build_qr_payload(doc.name)
 

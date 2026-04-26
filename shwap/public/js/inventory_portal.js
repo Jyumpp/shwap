@@ -13,6 +13,13 @@
   const fitProfilesTable = document.getElementById("fitProfilesTable");
   const clothingTable = document.getElementById("clothingTable");
   const fitEstimateResult = document.getElementById("fitEstimateResult");
+  const ROUTE_TO_TAB = {
+    inventory: "inventoryTab",
+    listings: "listingsTab",
+    lending: "lendingTab",
+    requests: "requestsTab",
+    clothing: "clothingTab",
+  };
 
   function number(value) {
     return Number(value || 0).toLocaleString();
@@ -29,6 +36,29 @@
     return `<table class="table"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
 
+  function asDeskFormLink(doctypeRoute, name, label) {
+    if (!name) return label || "-";
+    const safeLabel = label || name;
+    return `<a href="/app/${doctypeRoute}/${encodeURIComponent(name)}" target="_blank">${safeLabel}</a>`;
+  }
+
+  function getRouteFromHash() {
+    const hash = (window.location.hash || "").replace(/^#\/?/, "");
+    return ROUTE_TO_TAB[hash] ? hash : "inventory";
+  }
+
+  function activateRoute(route) {
+    const targetRoute = ROUTE_TO_TAB[route] ? route : "inventory";
+    const tab = ROUTE_TO_TAB[targetRoute];
+
+    document.querySelectorAll("#portalNav [data-route]").forEach((entry) => {
+      entry.classList.toggle("active", entry.dataset.route === targetRoute);
+    });
+    document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+    const activePanel = document.getElementById(tab);
+    if (activePanel) activePanel.classList.add("active");
+  }
+
   function render() {
     const summary = state.summary || {};
     metricGrid.innerHTML = `
@@ -40,7 +70,7 @@
 
     itemsTable.innerHTML = table(
       [
-        { key: "item_name", label: "Item" },
+        { key: "item_name", label: "Item", render: (_value, row) => asDeskFormLink("inventory-item", row.name, row.item_name) },
         { key: "category", label: "Category" },
         { key: "location", label: "Location" },
         { key: "status", label: "Status" },
@@ -48,8 +78,8 @@
           key: "name",
           label: "Actions",
           render: (_value, row) =>
-            `<button class="action-btn" data-action="list" data-item="${row.name}">List</button>
-             <button class="action-btn" data-action="lend" data-item="${row.name}">Lend</button>`,
+            `<button class="btn btn-default btn-xs action-btn" data-action="list" data-item="${row.name}">List</button>
+             <button class="btn btn-default btn-xs action-btn" data-action="lend" data-item="${row.name}">Lend</button>`,
         },
       ],
       state.items || [],
@@ -58,7 +88,7 @@
 
     listingsTable.innerHTML = table(
       [
-        { key: "title", label: "Title" },
+        { key: "title", label: "Title", render: (_value, row) => asDeskFormLink("listing", row.name, row.title) },
         { key: "listing_type", label: "Type" },
         { key: "listing_status", label: "Status" },
         { key: "price", label: "Price", render: (value) => (value ? `$${Number(value).toFixed(2)}` : "-") },
@@ -69,7 +99,7 @@
 
     lendingTable.innerHTML = table(
       [
-        { key: "inventory_item", label: "Item" },
+        { key: "inventory_item", label: "Item", render: (value) => asDeskFormLink("inventory-item", value, value) },
         { key: "borrower", label: "Borrower" },
         { key: "status", label: "Status" },
         { key: "due_date", label: "Due Date" },
@@ -77,8 +107,8 @@
           key: "name",
           label: "Actions",
           render: (_value, row) =>
-            `<button class="action-btn" data-action="lending-status" data-status="Checked out" data-name="${row.name}">Checked out</button>
-             <button class="action-btn" data-action="lending-status" data-status="Returned accepted" data-name="${row.name}">Returned</button>`,
+            `<button class="btn btn-default btn-xs action-btn" data-action="lending-status" data-status="Checked out" data-name="${row.name}">Checked out</button>
+             <button class="btn btn-default btn-xs action-btn" data-action="lending-status" data-status="Returned accepted" data-name="${row.name}">Returned</button>`,
         },
       ],
       state.lending || [],
@@ -87,7 +117,7 @@
 
     requestsTable.innerHTML = table(
       [
-        { key: "title", label: "Title" },
+        { key: "title", label: "Title", render: (_value, row) => asDeskFormLink("wanted-request", row.name, row.title) },
         { key: "request_type", label: "Type" },
         { key: "status", label: "Status" },
         { key: "budget", label: "Budget", render: (value) => (value ? `$${Number(value).toFixed(2)}` : "-") },
@@ -98,7 +128,7 @@
 
     fitProfilesTable.innerHTML = table(
       [
-        { key: "profile_name", label: "Profile" },
+        { key: "profile_name", label: "Profile", render: (_value, row) => asDeskFormLink("fit-profile", row.name, row.profile_name) },
         { key: "preferred_fit", label: "Fit" },
         { key: "privacy_level", label: "Privacy" },
       ],
@@ -108,7 +138,7 @@
 
     clothingTable.innerHTML = table(
       [
-        { key: "inventory_item", label: "Item" },
+        { key: "inventory_item", label: "Item", render: (value) => asDeskFormLink("inventory-item", value, value) },
         { key: "garment_type", label: "Garment" },
         { key: "label_size", label: "Size" },
         { key: "waist", label: "Waist" },
@@ -153,15 +183,14 @@
   function bindDynamicActions() {
     root.querySelectorAll("[data-action='list']").forEach((button) => {
       button.addEventListener("click", () => {
-        document.querySelector('[data-tab="listingsTab"]').click();
+        window.location.hash = "/listings";
         document.getElementById("listingItem").value = button.dataset.item || "";
       });
     });
 
     root.querySelectorAll("[data-action='lend']").forEach((button) => {
-      document.querySelector('[data-tab="lendingTab"]');
       button.addEventListener("click", () => {
-        document.querySelector('[data-tab="lendingTab"]').click();
+        window.location.hash = "/lending";
         document.getElementById("lendingItem").value = button.dataset.item || "";
       });
     });
@@ -274,7 +303,7 @@
     const results = response.message || [];
     itemsTable.innerHTML = table(
       [
-        { key: "item_name", label: "Item" },
+        { key: "item_name", label: "Item", render: (_value, row) => asDeskFormLink("inventory-item", row.name, row.item_name) },
         { key: "category", label: "Category" },
         { key: "location", label: "Location" },
         { key: "status", label: "Status" },
@@ -289,15 +318,13 @@
     button.addEventListener("click", refreshData);
   });
 
-  document.getElementById("portalNav").querySelectorAll("button[data-tab]").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("#portalNav button[data-tab]").forEach((entry) => entry.classList.remove("active"));
-      button.classList.add("active");
-      const tab = button.dataset.tab;
-      document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
-      document.getElementById(tab).classList.add("active");
+  document.getElementById("portalNav").querySelectorAll("[data-route]").forEach((link) => {
+    link.addEventListener("click", () => {
+      activateRoute(link.dataset.route);
     });
   });
 
+  window.addEventListener("hashchange", () => activateRoute(getRouteFromHash()));
+  activateRoute(getRouteFromHash());
   render();
 })();

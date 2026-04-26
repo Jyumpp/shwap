@@ -31,6 +31,8 @@ After migrate, open the `Shwap` workspace in Desk.
 
 - Open `Inventory Item` list and click `Quick Add Item` in the list toolbar.
 - `Inventory Item` also uses Frappe Quick Entry (`item_name`, `category`, `location`, `condition`, `visibility`, `primary_photo`).
+- `Item Type` options are category-aware (e.g., clothing categories get garment-focused item types).
+- Clothing items get a `Manage Clothing Detail` action on the item form.
 
 ## Website Portal
 
