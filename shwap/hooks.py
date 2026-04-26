@@ -15,6 +15,10 @@ doctype_js = {
     "Lending Transaction": "public/js/lending_transaction.js",
 }
 
+doctype_list_js = {
+    "Inventory Item": "public/js/inventory_item_list.js",
+}
+
 doc_events = {
     "Inventory Item": {
         "validate": "shwap.shwap.doctype.inventory_item.inventory_item.validate_inventory_item",

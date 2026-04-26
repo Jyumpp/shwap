@@ -48,3 +48,27 @@
 - `dashboard_summary()`
 - `lending_queue()`
 - `estimate_fit_for_item(clothing_detail, fit_profile)`
+- `portal_bootstrap()`
+- `portal_quick_add_item(payload)`
+- `portal_create_wanted_request(payload)`
+
+## Public-Facing Route
+
+- `/inventory` (login required) for non-Desk user view.
+
+## MVP Feature Status
+
+- ✅ Mobile-friendly quick add (`Inventory Item` quick entry + list quick-add button)
+- ✅ Item photos (`primary_photo`)
+- ✅ Categories and tags (`Item Category`, `Inventory Item.tags`)
+- ✅ Locations (`Location` + linked on item)
+- ✅ Private inventory defaults (`visibility` default = `Private`)
+- ✅ Group inventory (`owner_group` + group-aware permissions)
+- ✅ Listing generated from inventory item (API + form button)
+- ✅ Lending workflow and lifecycle (`Lending Transaction` + workflow bootstrap)
+- ✅ Basic trade/swap listing (`Listing.listing_type` includes `Trade` / `Swap`)
+- ✅ Wanted requests (`Wanted Request`)
+- ✅ Clothing measurements (`Clothing Detail`)
+- ✅ Basic fit profile (`Fit Profile` + fit estimate)
+- ✅ QR payload per item (`Inventory Item.qr_payload`)
+- ✅ Search and filters (`search_fields` + list filters + `search_inventory`)

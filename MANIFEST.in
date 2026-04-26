@@ -1,1 +1,1 @@
-recursive-include shwap *.json *.py *.md *.txt
+recursive-include shwap *.json *.py *.md *.txt *.html *.js *.css

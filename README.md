@@ -27,6 +27,21 @@ bench --site your-site migrate
 
 After migrate, open the `Shwap` workspace in Desk.
 
+## Desk Quick Add
+
+- Open `Inventory Item` list and click `Quick Add Item` in the list toolbar.
+- `Inventory Item` also uses Frappe Quick Entry (`item_name`, `category`, `location`, `condition`, `visibility`, `primary_photo`).
+
+## Website Portal
+
+- User-facing inventory portal route: `/inventory`
+- Uses Desk login/session, but renders a custom inventory manager UI.
+- Includes:
+  - dashboard metrics
+  - quick add item
+  - wanted request creation
+  - item/listing/lending/request tables
+
 ## Quick Validation
 
 From this repo:

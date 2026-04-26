@@ -1,0 +1,92 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Shwap Inventory{% endblock %}
+
+{% block page_content %}
+<div class="shwap-portal" id="shwapPortal" data-initial='{{ initial_data | tojson }}'>
+  <header class="shwap-header">
+    <div>
+      <h1>Shwap Inventory</h1>
+      <p>Track what you own. Share what you can.</p>
+    </div>
+    <a class="desk-link" href="/app/shwap">Open Desk</a>
+  </header>
+
+  <section class="metric-grid" id="metricGrid"></section>
+
+  <section class="shwap-layout">
+    <aside class="shwap-actions">
+      <article class="panel">
+        <h3>Quick Add Item</h3>
+        <form id="quickAddForm">
+          <label>Item Name<input name="item_name" required></label>
+          <label>Category<select name="category" id="quickAddCategory" required></select></label>
+          <label>Location<select name="location" id="quickAddLocation" required></select></label>
+          <label>Condition
+            <select name="condition">
+              <option>Excellent</option><option selected>Good</option><option>Fair</option><option>Poor</option>
+            </select>
+          </label>
+          <label>Visibility
+            <select name="visibility">
+              <option selected>Private</option><option>Household</option><option>Specific group</option><option>Public listing only</option>
+            </select>
+          </label>
+          <label>Notes<textarea name="notes"></textarea></label>
+          <button type="submit">Add Item</button>
+        </form>
+      </article>
+
+      <article class="panel">
+        <h3>Create Wanted Request</h3>
+        <form id="wantedForm">
+          <label>Title<input name="title" required></label>
+          <label>Request Type
+            <select name="request_type" required>
+              <option>Want to borrow</option><option>Want to buy</option><option>Want to trade for</option><option>Want for free</option><option>Looking for repair/replacement part</option>
+            </select>
+          </label>
+          <label>Category<select name="category" id="wantedCategory"></select></label>
+          <label>Budget<input type="number" min="0" step="0.01" name="budget"></label>
+          <button type="submit">Create Request</button>
+        </form>
+      </article>
+    </aside>
+
+    <main class="shwap-data">
+      <article class="panel">
+        <div class="panel-head">
+          <h3>My Items</h3>
+          <button class="refresh-btn" data-refresh>Refresh</button>
+        </div>
+        <div id="itemsTable"></div>
+      </article>
+
+      <article class="panel">
+        <h3>Listings</h3>
+        <div id="listingsTable"></div>
+      </article>
+
+      <article class="panel">
+        <h3>Lending</h3>
+        <div id="lendingTable"></div>
+      </article>
+
+      <article class="panel">
+        <h3>Wanted Requests</h3>
+        <div id="requestsTable"></div>
+      </article>
+    </main>
+  </section>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}

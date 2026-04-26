@@ -86,6 +86,7 @@ def create_workspace():
         workspace.set("links", [])
 
     inventory_rows = [
+        ("Quick Add Item", "Inventory Item"),
         ("Inventory Items", "Inventory Item"),
         ("Listings", "Listing"),
         ("Lending", "Lending Transaction"),
@@ -109,7 +110,7 @@ def create_workspace():
     content = [
         {"id": "header-main", "type": "header", "data": {"text": "Inventory"}},
     ]
-    for label, shortcut_name in shortcut_blocks[:4]:
+    for label, shortcut_name in shortcut_blocks[:5]:
         content.append(
             {
                 "id": f"shortcut-{label.lower().replace(' ', '-')}",
@@ -123,7 +124,7 @@ def create_workspace():
 
     content.append({"id": "header-setup", "type": "header", "data": {"text": "Setup"}})
 
-    for label, shortcut_name in shortcut_blocks[4:]:
+    for label, shortcut_name in shortcut_blocks[5:]:
         content.append(
             {
                 "id": f"shortcut-{label.lower().replace(' ', '-')}",
