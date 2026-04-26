@@ -104,7 +104,7 @@ def create_workspace():
         shortcut_row = _append_workspace_child(workspace, "shortcuts", label=label, link_to=doctype_name)
         _append_workspace_child(workspace, "links", label=label, link_to=doctype_name)
         if shortcut_row:
-            shortcut_blocks.append((label, shortcut_row.name))
+            shortcut_blocks.append((label, shortcut_row.label or label))
 
     content = [
         {"id": "header-main", "type": "header", "data": {"text": "Inventory"}},
