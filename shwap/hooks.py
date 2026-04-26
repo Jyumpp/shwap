@@ -44,3 +44,11 @@ has_permission = {
     "Inventory Item": "shwap.permissions.inventory_item_has_permission",
     "Listing": "shwap.permissions.listing_has_permission",
 }
+
+website_route_rules = [
+    {"from_route": "/inventory-items", "to_route": "inventory_items"},
+    {"from_route": "/inventory-listings", "to_route": "inventory_listings"},
+    {"from_route": "/inventory-lending", "to_route": "inventory_lending"},
+    {"from_route": "/inventory-requests", "to_route": "inventory_requests"},
+    {"from_route": "/inventory-wardrobe", "to_route": "inventory_wardrobe"},
+]
