@@ -70,100 +70,103 @@ def seed_default_locations():
 
 
 def create_workspace():
-    if frappe.db.exists("Workspace", "Shwap"):
-        return
+    workspace_name = frappe.db.exists("Workspace", "Shwap")
+    workspace = frappe.get_doc("Workspace", workspace_name) if workspace_name else frappe.new_doc("Workspace")
 
-    content = [
-        {
-            "id": "header-main",
-            "type": "header",
-            "data": {"text": "Inventory"},
-        },
-        {
-            "id": "shortcut-inventory",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Inventory Item",
-                "col": 3,
-                "type": "DocType",
-                "link_to": "Inventory Item",
-            },
-        },
-        {
-            "id": "shortcut-listing",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Listing",
-                "col": 3,
-                "type": "DocType",
-                "link_to": "Listing",
-            },
-        },
-        {
-            "id": "shortcut-lending",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Lending Transaction",
-                "col": 3,
-                "type": "DocType",
-                "link_to": "Lending Transaction",
-            },
-        },
-        {
-            "id": "shortcut-requests",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Wanted Request",
-                "col": 3,
-                "type": "DocType",
-                "link_to": "Wanted Request",
-            },
-        },
-        {
-            "id": "header-config",
-            "type": "header",
-            "data": {"text": "Setup"},
-        },
-        {
-            "id": "shortcut-categories",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Item Category",
-                "col": 4,
-                "type": "DocType",
-                "link_to": "Item Category",
-            },
-        },
-        {
-            "id": "shortcut-locations",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Location",
-                "col": 4,
-                "type": "DocType",
-                "link_to": "Location",
-            },
-        },
-        {
-            "id": "shortcut-groups",
-            "type": "shortcut",
-            "data": {
-                "shortcut_name": "Shwap Group",
-                "col": 4,
-                "type": "DocType",
-                "link_to": "Shwap Group",
-            },
-        },
-    ]
-
-    workspace = frappe.new_doc("Workspace")
     workspace.title = "Shwap"
+    workspace.label = "Shwap"
     workspace.module = "Shwap"
     workspace.icon = "package"
     workspace.public = 1
+    workspace.is_hidden = 0
+
+    if workspace.meta.has_field("shortcuts"):
+        workspace.set("shortcuts", [])
+    if workspace.meta.has_field("links"):
+        workspace.set("links", [])
+
+    inventory_rows = [
+        ("Inventory Items", "Inventory Item"),
+        ("Listings", "Listing"),
+        ("Lending", "Lending Transaction"),
+        ("Wanted Requests", "Wanted Request"),
+    ]
+    setup_rows = [
+        ("Categories", "Item Category"),
+        ("Locations", "Location"),
+        ("Groups", "Shwap Group"),
+        ("Fit Profiles", "Fit Profile"),
+        ("Clothing Details", "Clothing Detail"),
+    ]
+
+    shortcut_blocks = []
+    for label, doctype_name in inventory_rows + setup_rows:
+        shortcut_row = _append_workspace_child(workspace, "shortcuts", label=label, link_to=doctype_name)
+        _append_workspace_child(workspace, "links", label=label, link_to=doctype_name)
+        if shortcut_row:
+            shortcut_blocks.append((label, shortcut_row.name))
+
+    content = [
+        {"id": "header-main", "type": "header", "data": {"text": "Inventory"}},
+    ]
+    for label, shortcut_name in shortcut_blocks[:4]:
+        content.append(
+            {
+                "id": f"shortcut-{label.lower().replace(' ', '-')}",
+                "type": "shortcut",
+                "data": {
+                    "shortcut_name": shortcut_name,
+                    "col": 3,
+                },
+            }
+        )
+
+    content.append({"id": "header-setup", "type": "header", "data": {"text": "Setup"}})
+
+    for label, shortcut_name in shortcut_blocks[4:]:
+        content.append(
+            {
+                "id": f"shortcut-{label.lower().replace(' ', '-')}",
+                "type": "shortcut",
+                "data": {
+                    "shortcut_name": shortcut_name,
+                    "col": 4,
+                },
+            }
+        )
+
     workspace.content = frappe.as_json(content)
-    workspace.label = "Shwap"
-    workspace.insert(ignore_permissions=True)
+
+    if workspace_name:
+        workspace.save(ignore_permissions=True)
+    else:
+        workspace.insert(ignore_permissions=True)
+
+
+def _append_workspace_child(workspace, table_field: str, label: str, link_to: str):
+    if not workspace.meta.has_field(table_field):
+        return None
+
+    child_df = workspace.meta.get_field(table_field)
+    child_doctype = child_df.options if child_df else None
+    if not child_doctype or not frappe.db.exists("DocType", child_doctype):
+        return None
+
+    row = workspace.append(table_field, {})
+    child_meta = frappe.get_meta(child_doctype)
+
+    if child_meta.has_field("label"):
+        row.label = label
+    if child_meta.has_field("type"):
+        row.type = "DocType"
+    if child_meta.has_field("link_type"):
+        row.link_type = "DocType"
+    if child_meta.has_field("link_to"):
+        row.link_to = link_to
+    if child_meta.has_field("hidden"):
+        row.hidden = 0
+
+    return row
 
 
 def create_lending_workflow():
