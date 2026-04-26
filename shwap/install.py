@@ -158,14 +158,25 @@ def _append_workspace_child(workspace, table_field: str, label: str, link_to: st
     if child_meta.has_field("label"):
         row.label = label
     if child_meta.has_field("type"):
-        row.type = "DocType"
+        type_df = child_meta.get_field("type")
+        options = [opt.strip() for opt in (type_df.options or "").split("\n") if opt.strip()] if type_df else []
+        if "DocType" in options:
+            row.type = "DocType"
+        elif "Link" in options:
+            row.type = "Link"
     if child_meta.has_field("link_type"):
-        row.link_type = "DocType"
+        link_type_df = child_meta.get_field("link_type")
+        link_type_options = [opt.strip() for opt in (link_type_df.options or "").split("\n") if opt.strip()] if link_type_df else []
+        if "DocType" in link_type_options:
+            row.link_type = "DocType"
     if child_meta.has_field("link_to"):
         row.link_to = link_to
     if child_meta.has_field("hidden"):
         row.hidden = 0
-
+    if child_meta.has_field("is_query_report"):
+        row.is_query_report = 0
+    if child_meta.has_field("onboard"):
+        row.onboard = 0
     return row
 
 
