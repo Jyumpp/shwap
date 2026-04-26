@@ -1,4 +1,5 @@
 import frappe
+from frappe.exceptions import LinkValidationError
 
 
 ROLES = [
@@ -170,42 +171,81 @@ def create_lending_workflow():
     if frappe.db.exists("Workflow", workflow_name):
         return
 
-    workflow = frappe.new_doc("Workflow")
-    workflow.workflow_name = workflow_name
-    workflow.document_type = "Lending Transaction"
-    workflow.is_active = 1
-    workflow.workflow_state_field = "status"
-
-    for state_name, role, doc_status in [
+    states = [
         ("Requested", "Shwap User", 0),
         ("Approved", "Inventory Manager", 0),
         ("Checked out", "Inventory Manager", 0),
         ("Returned accepted", "Inventory Manager", 0),
         ("Closed", "Inventory Manager", 1),
-    ]:
-        workflow.append(
-            "states",
-            {
-                "state": state_name,
-                "allow_edit": role,
-                "doc_status": doc_status,
-            },
+    ]
+    actions = ["Approve", "Checkout", "Mark Returned", "Close"]
+
+    try:
+        _ensure_workflow_states([state_name for state_name, _, _ in states])
+        _ensure_workflow_actions(actions)
+
+        workflow = frappe.new_doc("Workflow")
+        workflow.workflow_name = workflow_name
+        workflow.document_type = "Lending Transaction"
+        workflow.is_active = 1
+        workflow.workflow_state_field = "status"
+
+        for state_name, role, doc_status in states:
+            workflow.append(
+                "states",
+                {
+                    "state": state_name,
+                    "allow_edit": role,
+                    "doc_status": doc_status,
+                },
+            )
+
+        for source, action, target, role in [
+            ("Requested", "Approve", "Approved", "Inventory Manager"),
+            ("Approved", "Checkout", "Checked out", "Inventory Manager"),
+            ("Checked out", "Mark Returned", "Returned accepted", "Inventory Manager"),
+            ("Returned accepted", "Close", "Closed", "Inventory Manager"),
+        ]:
+            workflow.append(
+                "transitions",
+                {
+                    "state": source,
+                    "action": action,
+                    "next_state": target,
+                    "allowed": role,
+                },
+            )
+
+        workflow.insert(ignore_permissions=True)
+    except LinkValidationError:
+        frappe.log_error(
+            title="Shwap Workflow Setup Skipped",
+            message="Unable to create Lending Transaction workflow due to missing linked workflow metadata. "
+            "App installation continues; create workflow manually if needed.",
         )
 
-    for source, action, target, role in [
-        ("Requested", "Approve", "Approved", "Inventory Manager"),
-        ("Approved", "Checkout", "Checked out", "Inventory Manager"),
-        ("Checked out", "Mark Returned", "Returned accepted", "Inventory Manager"),
-        ("Returned accepted", "Close", "Closed", "Inventory Manager"),
-    ]:
-        workflow.append(
-            "transitions",
-            {
-                "state": source,
-                "action": action,
-                "next_state": target,
-                "allowed": role,
-            },
-        )
 
-    workflow.insert(ignore_permissions=True)
+def _ensure_workflow_states(state_names: list[str]):
+    if not frappe.db.exists("DocType", "Workflow State"):
+        return
+
+    for state_name in state_names:
+        if frappe.db.exists("Workflow State", state_name):
+            continue
+        state = frappe.new_doc("Workflow State")
+        state.workflow_state_name = state_name
+        state.style = "Primary"
+        state.insert(ignore_permissions=True)
+
+
+def _ensure_workflow_actions(action_names: list[str]):
+    action_doctype = "Workflow Action Master"
+    if not frappe.db.exists("DocType", action_doctype):
+        return
+
+    for action_name in action_names:
+        if frappe.db.exists(action_doctype, action_name):
+            continue
+        action = frappe.new_doc(action_doctype)
+        action.workflow_action_name = action_name
+        action.insert(ignore_permissions=True)
