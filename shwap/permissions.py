@@ -5,7 +5,10 @@ PUBLIC_VISIBILITIES = ("Public listing only", "Public searchable")
 
 
 def _is_manager(user: str) -> bool:
-    roles = frappe.get_roles(user=user)
+    try:
+        roles = frappe.get_roles(user)
+    except TypeError:
+        roles = frappe.get_roles(user=user)
     return "System Manager" in roles or "Inventory Manager" in roles
 
 
