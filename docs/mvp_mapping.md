@@ -54,7 +54,7 @@
 
 ## Public-Facing Route
 
-- `/inventory` (login required) for non-Desk user view.
+- `/inventory` (login required) for non-Desk user view, with full inventory/listing/lending/request/clothing/fit workflows.
 
 ## MVP Feature Status
 

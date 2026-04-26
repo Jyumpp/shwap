@@ -38,9 +38,12 @@ After migrate, open the `Shwap` workspace in Desk.
 - Uses Desk login/session, but renders a custom inventory manager UI.
 - Includes:
   - dashboard metrics
-  - quick add item
-  - wanted request creation
-  - item/listing/lending/request tables
+  - inventory quick add + search
+  - listing creation and listing table
+  - lending creation and status controls
+  - wanted request creation + table
+  - fit profile and clothing detail management
+  - fit estimate tool (clothing vs profile)
 
 ## Quick Validation
 

@@ -125,6 +125,39 @@ def _portal_bootstrap_data(user: str):
         limit_page_length=50,
     )
 
+    fit_profiles = frappe.get_all(
+        "Fit Profile",
+        filters={"user": user},
+        fields=["name", "profile_name", "preferred_fit", "privacy_level", "modified"],
+        order_by="modified desc",
+        limit_page_length=50,
+    )
+
+    clothing_details = frappe.get_all(
+        "Clothing Detail",
+        fields=[
+            "name",
+            "inventory_item",
+            "garment_type",
+            "label_size",
+            "fit_category",
+            "waist",
+            "inseam",
+            "chest_bust",
+            "modified",
+        ],
+        order_by="modified desc",
+        limit_page_length=50,
+    )
+
+    users = frappe.get_all(
+        "User",
+        filters={"enabled": 1},
+        fields=["name", "full_name"],
+        order_by="full_name asc",
+        limit_page_length=200,
+    )
+
     categories = frappe.get_all("Item Category", fields=["name"], order_by="name asc")
     locations = frappe.get_all("Location", fields=["name"], order_by="name asc")
 
@@ -134,6 +167,9 @@ def _portal_bootstrap_data(user: str):
         "listings": listings,
         "lending": lending,
         "requests": requests,
+        "fit_profiles": fit_profiles,
+        "clothing_details": clothing_details,
+        "users": [entry.name for entry in users if entry.name != "Guest"],
         "categories": [entry.name for entry in categories],
         "locations": [entry.name for entry in locations],
     }
@@ -356,6 +392,156 @@ def portal_create_wanted_request(payload=None):
     request.status = "Open"
     request.insert()
     return {"name": request.name}
+
+
+@frappe.whitelist()
+def portal_create_listing(payload=None):
+    _require_logged_in()
+    data = _parse_json(payload)
+    if not data.get("item"):
+        frappe.throw(_("Inventory Item is required."))
+    if not data.get("listing_type"):
+        frappe.throw(_("Listing Type is required."))
+
+    return create_listing_from_item(
+        item=data.get("item"),
+        listing_type=data.get("listing_type"),
+        payload={
+            "listing_status": data.get("listing_status") or "Draft",
+            "title": data.get("title"),
+            "description": data.get("description"),
+            "visibility_audience": data.get("visibility_audience") or "Private",
+            "price": data.get("price") or 0,
+            "trade_interests": data.get("trade_interests"),
+            "location_area": data.get("location_area"),
+        },
+    )
+
+
+@frappe.whitelist()
+def portal_start_lending(payload=None):
+    _require_logged_in()
+    data = _parse_json(payload)
+    if not data.get("item"):
+        frappe.throw(_("Inventory Item is required."))
+    if not data.get("borrower"):
+        frappe.throw(_("Borrower is required."))
+    if not data.get("due_date"):
+        frappe.throw(_("Due Date is required."))
+
+    return start_lending_transaction(
+        item=data.get("item"),
+        borrower=data.get("borrower"),
+        due_date=data.get("due_date"),
+        payload={
+            "lender": frappe.session.user,
+            "status": data.get("status") or "Requested",
+            "requested_start": data.get("requested_start"),
+            "deposit_amount": data.get("deposit_amount") or 0,
+            "pickup_location": data.get("pickup_location"),
+            "return_location": data.get("return_location"),
+            "pre_lend_condition": data.get("pre_lend_condition"),
+            "notes": data.get("notes"),
+        },
+    )
+
+
+@frappe.whitelist()
+def portal_update_lending_status(name: str, status: str, return_date: Optional[str] = None):
+    _require_logged_in()
+    _assert_doctype_permission("Lending Transaction", "write")
+    transaction = _ensure_doc("Lending Transaction", name)
+    if transaction.lender != frappe.session.user and "Inventory Manager" not in frappe.get_roles():
+        frappe.throw(_("Not permitted to update this lending transaction."), frappe.PermissionError)
+
+    _assert_choice(
+        status,
+        {
+            "Available",
+            "Requested",
+            "Approved",
+            "Scheduled for pickup",
+            "Checked out",
+            "Due soon",
+            "Overdue",
+            "Returned pending inspection",
+            "Returned accepted",
+            "Returned damaged",
+            "Lost",
+            "Dispute opened",
+            "Closed",
+        },
+        "Lending Status",
+    )
+
+    transaction.status = status
+    if return_date:
+        transaction.return_date = return_date
+    if status == "Returned accepted" and not transaction.return_date:
+        transaction.return_date = nowdate()
+    transaction.save()
+    return {"name": transaction.name, "status": transaction.status}
+
+
+@frappe.whitelist()
+def portal_create_fit_profile(payload=None):
+    _require_logged_in()
+    _assert_doctype_permission("Fit Profile", "create")
+    data = _parse_json(payload)
+    if not data.get("profile_name"):
+        frappe.throw(_("Profile Name is required."))
+
+    profile = frappe.new_doc("Fit Profile")
+    profile.user = frappe.session.user
+    profile.profile_name = data.get("profile_name")
+    profile.height = data.get("height")
+    profile.shoulder_width = data.get("shoulder_width")
+    profile.chest_bust = data.get("chest_bust")
+    profile.waist = data.get("waist")
+    profile.hip = data.get("hip")
+    profile.inseam = data.get("inseam")
+    profile.shoe_size = data.get("shoe_size")
+    profile.preferred_fit = data.get("preferred_fit")
+    profile.privacy_level = data.get("privacy_level") or "Private only"
+    profile.notes = data.get("notes")
+    profile.insert()
+    return {"name": profile.name}
+
+
+@frappe.whitelist()
+def portal_create_clothing_detail(payload=None):
+    _require_logged_in()
+    _assert_doctype_permission("Clothing Detail", "create")
+    data = _parse_json(payload)
+    if not data.get("inventory_item"):
+        frappe.throw(_("Inventory Item is required."))
+    if not data.get("garment_type"):
+        frappe.throw(_("Garment Type is required."))
+
+    item = _ensure_doc("Inventory Item", data.get("inventory_item"))
+    if item.owner_user != frappe.session.user and "Inventory Manager" not in frappe.get_roles():
+        frappe.throw(_("Not permitted to add clothing details for this item."), frappe.PermissionError)
+
+    detail = frappe.new_doc("Clothing Detail")
+    detail.inventory_item = data.get("inventory_item")
+    detail.garment_type = data.get("garment_type")
+    detail.label_size = data.get("label_size")
+    detail.fit_category = data.get("fit_category")
+    detail.chest_bust = data.get("chest_bust")
+    detail.waist = data.get("waist")
+    detail.hip = data.get("hip")
+    detail.shoulder_width = data.get("shoulder_width")
+    detail.sleeve_length = data.get("sleeve_length")
+    detail.inseam = data.get("inseam")
+    detail.fabric = data.get("fabric")
+    detail.stretch = data.get("stretch")
+    detail.color = data.get("color")
+    detail.pattern = data.get("pattern")
+    detail.care_instructions = data.get("care_instructions")
+    detail.alterations = data.get("alterations")
+    detail.fit_notes = data.get("fit_notes")
+    detail.insert()
+    return {"name": detail.name}
 
 
 @frappe.whitelist()
