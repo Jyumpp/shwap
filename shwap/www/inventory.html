@@ -1,223 +1,42 @@
 {% extends "templates/web.html" %}
 
-{% block title %}Shwap Inventory{% endblock %}
+{% block title %}Shwap Dashboard{% endblock %}
 
 {% block page_content %}
-<div class="shwap-portal" id="shwapPortal" data-initial='{{ initial_data | tojson }}'>
-  <header class="shwap-header">
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
     <div>
-      <h1>Shwap Inventory</h1>
-      <p>Track what you own. Lend, trade, and manage it from one place.</p>
+      <h1>Shwap Dashboard</h1>
+      <p>Inventory-first home for lending, trading, and wardrobe management.</p>
     </div>
-    <a class="desk-link" href="/app/shwap">Open Desk</a>
+    <a class="btn btn-default btn-sm" href="/app/shwap">Open Desk</a>
   </header>
 
-  <section class="metric-grid" id="metricGrid"></section>
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
 
-  <section class="portal-nav" id="portalNav">
-    <a class="active" data-route="inventory" href="#/inventory">Inventory</a>
-    <a data-route="listings" href="#/listings">Listings</a>
-    <a data-route="lending" href="#/lending">Lending</a>
-    <a data-route="requests" href="#/requests">Requests</a>
-    <a data-route="clothing" href="#/clothing">Clothing & Fit</a>
-  </section>
+    <main class="portal-main">
+      <section class="metric-grid">
+        <article class="metric"><strong>{{ initial_data.summary.total_items }}</strong><span>Total Items</span></article>
+        <article class="metric"><strong>{{ initial_data.summary.lent_out }}</strong><span>Lent Out</span></article>
+        <article class="metric"><strong>{{ initial_data.summary.active_listings }}</strong><span>Active Listings</span></article>
+        <article class="metric"><strong>{{ initial_data.summary.open_requests }}</strong><span>Open Requests</span></article>
+      </section>
 
-  <section class="tab-panel active" id="inventoryTab">
-    <div class="shwap-layout">
-      <aside class="shwap-actions">
-        <article class="panel">
-          <h3>Quick Add Item</h3>
-          <form id="quickAddForm">
-            <label>Item Name<input name="item_name" required></label>
-            <label>Category<select name="category" id="quickAddCategory" required></select></label>
-            <label>Location<select name="location" id="quickAddLocation" required></select></label>
-            <label>Condition
-              <select name="condition">
-                <option>Excellent</option><option selected>Good</option><option>Fair</option><option>Poor</option>
-              </select>
-            </label>
-            <label>Visibility
-              <select name="visibility">
-                <option selected>Private</option><option>Household</option><option>Specific group</option><option>Public listing only</option>
-              </select>
-            </label>
-            <label>Notes<textarea name="notes"></textarea></label>
-            <button type="submit" class="btn btn-primary btn-sm">Add Item</button>
-          </form>
-        </article>
-
-        <article class="panel">
-          <h3>Search Inventory</h3>
-          <form id="searchForm">
-            <label>Query<input name="query" placeholder="name, brand, serial"></label>
-            <label>Status
-              <select name="status">
-                <option value="">Any</option>
-                <option>Active</option><option>Lent out</option><option>Listed</option><option>Needs repair</option><option>Missing</option>
-              </select>
-            </label>
-            <label>Location<select name="location" id="searchLocation"><option value="">Any</option></select></label>
-            <button type="submit" class="btn btn-default btn-sm">Search</button>
-          </form>
-        </article>
-      </aside>
-
-      <main class="shwap-data">
-        <article class="panel">
-          <div class="panel-head">
-            <h3>My Items</h3>
-          <button class="btn btn-default btn-sm" data-refresh>Refresh</button>
-          </div>
-          <div id="itemsTable"></div>
-        </article>
-      </main>
-    </div>
-  </section>
-
-  <section class="tab-panel" id="listingsTab">
-    <div class="shwap-layout">
-      <aside class="shwap-actions">
-        <article class="panel">
-          <h3>Create Listing</h3>
-          <form id="listingForm">
-            <label>Item<select name="item" id="listingItem" required></select></label>
-            <label>Type
-              <select name="listing_type" required>
-                <option>Sell</option><option>Trade</option><option>Swap</option><option>Lend</option><option>Gift</option><option>Rent</option>
-              </select>
-            </label>
-            <label>Status
-              <select name="listing_status"><option>Draft</option><option>Active</option><option>Paused</option></select>
-            </label>
-            <label>Price<input type="number" name="price" min="0" step="0.01"></label>
-            <label>Description<textarea name="description"></textarea></label>
-            <button type="submit" class="btn btn-primary btn-sm">Create Listing</button>
-          </form>
-        </article>
-      </aside>
-      <main class="shwap-data">
-        <article class="panel">
-          <h3>My Listings</h3>
-          <div id="listingsTable"></div>
-        </article>
-      </main>
-    </div>
-  </section>
-
-  <section class="tab-panel" id="lendingTab">
-    <div class="shwap-layout">
-      <aside class="shwap-actions">
-        <article class="panel">
-          <h3>Start Lending</h3>
-          <form id="lendingForm">
-            <label>Item<select name="item" id="lendingItem" required></select></label>
-            <label>Borrower<select name="borrower" id="lendingBorrower" required></select></label>
-            <label>Due Date<input type="date" name="due_date" required></label>
-            <label>Deposit<input type="number" name="deposit_amount" min="0" step="0.01"></label>
-            <label>Pickup Location<input name="pickup_location"></label>
-            <button type="submit" class="btn btn-primary btn-sm">Create Lending</button>
-          </form>
-        </article>
-      </aside>
-      <main class="shwap-data">
-        <article class="panel">
-          <h3>Lending Lifecycle</h3>
-          <div id="lendingTable"></div>
-        </article>
-      </main>
-    </div>
-  </section>
-
-  <section class="tab-panel" id="requestsTab">
-    <div class="shwap-layout">
-      <aside class="shwap-actions">
-        <article class="panel">
-          <h3>Create Wanted Request</h3>
-          <form id="wantedForm">
-            <label>Title<input name="title" required></label>
-            <label>Request Type
-              <select name="request_type" required>
-                <option>Want to borrow</option><option>Want to buy</option><option>Want to trade for</option><option>Want for free</option><option>Looking for repair/replacement part</option>
-              </select>
-            </label>
-            <label>Category<select name="category" id="wantedCategory"></select></label>
-            <label>Budget<input type="number" min="0" step="0.01" name="budget"></label>
-            <label>Needed By<input type="date" name="needed_by"></label>
-            <button type="submit" class="btn btn-primary btn-sm">Create Request</button>
-          </form>
-        </article>
-      </aside>
-      <main class="shwap-data">
-        <article class="panel">
-          <h3>Wanted Requests</h3>
-          <div id="requestsTable"></div>
-        </article>
-      </main>
-    </div>
-  </section>
-
-  <section class="tab-panel" id="clothingTab">
-    <div class="shwap-layout">
-      <aside class="shwap-actions">
-        <article class="panel">
-          <h3>Create Fit Profile</h3>
-          <form id="fitProfileForm">
-            <label>Profile Name<input name="profile_name" required></label>
-            <label>Preferred Fit
-              <select name="preferred_fit"><option>Fitted</option><option>Relaxed</option><option>Oversized</option></select>
-            </label>
-            <label>Chest/Bust<input type="number" step="0.1" name="chest_bust"></label>
-            <label>Waist<input type="number" step="0.1" name="waist"></label>
-            <label>Hip<input type="number" step="0.1" name="hip"></label>
-            <label>Inseam<input type="number" step="0.1" name="inseam"></label>
-            <button type="submit" class="btn btn-primary btn-sm">Save Profile</button>
-          </form>
-        </article>
-
-        <article class="panel">
-          <h3>Add Clothing Detail</h3>
-          <form id="clothingForm">
-            <label>Item<select name="inventory_item" id="clothingItem" required></select></label>
-            <label>Garment Type<input name="garment_type" required></label>
-            <label>Label Size<input name="label_size"></label>
-            <label>Chest/Bust<input type="number" step="0.1" name="chest_bust"></label>
-            <label>Waist<input type="number" step="0.1" name="waist"></label>
-            <label>Hip<input type="number" step="0.1" name="hip"></label>
-            <label>Inseam<input type="number" step="0.1" name="inseam"></label>
-            <button type="submit" class="btn btn-primary btn-sm">Save Clothing Detail</button>
-          </form>
-        </article>
-      </aside>
-      <main class="shwap-data">
-        <article class="panel">
-          <h3>Fit Profiles</h3>
-          <div id="fitProfilesTable"></div>
-        </article>
-        <article class="panel">
-          <h3>Clothing Details</h3>
-          <div id="clothingTable"></div>
-        </article>
-        <article class="panel">
-          <h3>Fit Estimate</h3>
-          <form id="fitEstimateForm" class="fit-estimate">
-            <label>Clothing Detail<select name="clothing_detail" id="fitClothing" required></select></label>
-            <label>Fit Profile<select name="fit_profile" id="fitProfileSelect" required></select></label>
-            <button type="submit" class="btn btn-default btn-sm">Estimate Fit</button>
-          </form>
-          <div id="fitEstimateResult" class="muted"></div>
-        </article>
-      </main>
-    </div>
-  </section>
+      <section class="dashboard-links">
+        <a href="/inventory-items"><strong>Items</strong><span class="muted">Quick add, categorize, track holders and status.</span></a>
+        <a href="/inventory-listings"><strong>Listings</strong><span class="muted">Generate sell/trade/lend/gift listings from items.</span></a>
+        <a href="/inventory-lending"><strong>Lending</strong><span class="muted">Manage due dates, status, and returns.</span></a>
+        <a href="/inventory-requests"><strong>Requests</strong><span class="muted">Create and track wanted requests.</span></a>
+        <a href="/inventory-wardrobe"><strong>Wardrobe</strong><span class="muted">Clothing details, fit profiles, and fit matching.</span></a>
+        <a href="/app/inventory-item"><strong>Desk Lists</strong><span class="muted">Power-user access to native Frappe lists and reports.</span></a>
+      </section>
+    </main>
+  </div>
 </div>
 {% endblock %}
 
 {% block style %}
 {{ super() }}
 <link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
-{% endblock %}
-
-{% block script %}
-{{ super() }}
-<script src="/assets/shwap/js/inventory_portal.js"></script>
 {% endblock %}

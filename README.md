@@ -36,16 +36,19 @@ After migrate, open the `Shwap` workspace in Desk.
 
 ## Website Portal
 
-- User-facing inventory portal route: `/inventory`
+- User-facing inventory routes:
+  - `/inventory` (dashboard home)
+  - `/inventory-items`
+  - `/inventory-listings`
+  - `/inventory-lending`
+  - `/inventory-requests`
+  - `/inventory-wardrobe` (dedicated wardrobe area)
 - Uses Desk login/session, but renders a custom inventory manager UI.
 - Includes:
-  - dashboard metrics
-  - inventory quick add + search
-  - listing creation and listing table
-  - lending creation and status controls
-  - wanted request creation + table
-  - fit profile and clothing detail management
-  - fit estimate tool (clothing vs profile)
+  - dashboard metrics + feature navigation
+  - separated sub-pages for core workflows
+  - Frappe-styled buttons and forms (`btn`, `form-control`)
+  - wardrobe-specific workflow for clothing + fit
 
 ## Quick Validation
 

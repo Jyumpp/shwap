@@ -1,0 +1,75 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Wanted Requests{% endblock %}
+
+{% block page_content %}
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
+    <div>
+      <h1>Wanted Requests</h1>
+      <p>Track what you need to borrow, buy, trade, or replace.</p>
+    </div>
+    <a class="btn btn-default btn-sm" href="/inventory">Back to Dashboard</a>
+  </header>
+
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+
+    <main class="portal-main">
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Create Wanted Request</h3>
+          <form id="wantedForm">
+            <label>Title<input name="title" required></label>
+            <label>Request Type
+              <select name="request_type" required>
+                <option>Want to borrow</option><option>Want to buy</option><option>Want to trade for</option><option>Want for free</option><option>Looking for repair/replacement part</option>
+              </select>
+            </label>
+            <label>Category
+              <select name="category">
+                <option value="">Select</option>
+                {% for category in initial_data.categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Budget<input type="number" min="0" step="0.01" name="budget"></label>
+            <label>Needed By<input type="date" name="needed_by"></label>
+            <button type="submit" class="btn btn-primary btn-sm">Create Request</button>
+          </form>
+        </article>
+      </section>
+
+      <article class="portal-card">
+        <h3>My Requests</h3>
+        <table class="portal-table">
+          <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Budget</th></tr></thead>
+          <tbody>
+            {% for req in initial_data.requests %}
+            <tr>
+              <td><a href="/app/wanted-request/{{ req.name }}" target="_blank">{{ req.title }}</a></td>
+              <td>{{ req.request_type }}</td>
+              <td>{{ req.status }}</td>
+              <td>{% if req.budget %}${{ "%.2f"|format(req.budget) }}{% else %}-{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="muted">No requests yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}

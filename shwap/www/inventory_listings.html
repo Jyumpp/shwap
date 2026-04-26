@@ -1,0 +1,76 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Listings{% endblock %}
+
+{% block page_content %}
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
+    <div>
+      <h1>Listings</h1>
+      <p>Create listings from inventory items for sell/trade/lend/gift/rent.</p>
+    </div>
+    <a class="btn btn-default btn-sm" href="/inventory">Back to Dashboard</a>
+  </header>
+
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+
+    <main class="portal-main">
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Create Listing</h3>
+          <form id="listingForm">
+            <label>Item
+              <select name="item" id="listingItem" required>
+                {% for item in initial_data.items %}
+                <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Listing Type
+              <select name="listing_type" required>
+                <option>Sell</option><option>Trade</option><option>Swap</option><option>Lend</option><option>Gift</option><option>Rent</option>
+              </select>
+            </label>
+            <label>Status
+              <select name="listing_status"><option>Draft</option><option>Active</option><option>Paused</option></select>
+            </label>
+            <label>Price<input type="number" min="0" step="0.01" name="price"></label>
+            <label>Description<textarea name="description"></textarea></label>
+            <button type="submit" class="btn btn-primary btn-sm">Create Listing</button>
+          </form>
+        </article>
+      </section>
+
+      <article class="portal-card">
+        <h3>My Listings</h3>
+        <table class="portal-table">
+          <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Price</th></tr></thead>
+          <tbody>
+            {% for listing in initial_data.listings %}
+            <tr>
+              <td><a href="/app/listing/{{ listing.name }}" target="_blank">{{ listing.title }}</a></td>
+              <td>{{ listing.listing_type }}</td>
+              <td>{{ listing.listing_status }}</td>
+              <td>{% if listing.price %}${{ "%.2f"|format(listing.price) }}{% else %}-{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="muted">No listings yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}

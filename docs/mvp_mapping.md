@@ -54,7 +54,12 @@
 
 ## Public-Facing Route
 
-- `/inventory` (login required) for non-Desk user view, with full inventory/listing/lending/request/clothing/fit workflows.
+- `/inventory` dashboard plus dedicated sub-pages:
+  - `/inventory-items`
+  - `/inventory-listings`
+  - `/inventory-lending`
+  - `/inventory-requests`
+  - `/inventory-wardrobe`
 
 ## MVP Feature Status
 

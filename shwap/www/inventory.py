@@ -1,15 +1,5 @@
-import frappe
-
-from shwap.api import _portal_bootstrap_data
+from shwap.portal import get_portal_context
 
 
 def get_context(context):
-    context.no_cache = 1
-    context.show_sidebar = False
-    context.title = "Shwap Inventory"
-
-    if frappe.session.user == "Guest":
-        frappe.local.flags.redirect_location = "/login?redirect-to=/inventory"
-        raise frappe.Redirect
-
-    context.initial_data = _portal_bootstrap_data(frappe.session.user)
+    get_portal_context(context, page_name="inventory", page_title="Shwap Dashboard")

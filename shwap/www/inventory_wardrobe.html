@@ -1,0 +1,130 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Wardrobe{% endblock %}
+
+{% block page_content %}
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
+    <div>
+      <h1>Wardrobe</h1>
+      <p>Manage clothing measurements, fit profiles, and compatibility checks.</p>
+    </div>
+    <a class="btn btn-default btn-sm" href="/inventory">Back to Dashboard</a>
+  </header>
+
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+
+    <main class="portal-main">
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Create Fit Profile</h3>
+          <form id="fitProfileForm">
+            <label>Profile Name<input name="profile_name" required></label>
+            <label>Preferred Fit
+              <select name="preferred_fit"><option>Fitted</option><option>Relaxed</option><option>Oversized</option></select>
+            </label>
+            <label>Chest/Bust<input type="number" step="0.1" name="chest_bust"></label>
+            <label>Waist<input type="number" step="0.1" name="waist"></label>
+            <label>Hip<input type="number" step="0.1" name="hip"></label>
+            <label>Inseam<input type="number" step="0.1" name="inseam"></label>
+            <button type="submit" class="btn btn-primary btn-sm">Save Profile</button>
+          </form>
+        </article>
+
+        <article class="portal-card">
+          <h3>Add Clothing Detail</h3>
+          <form id="clothingForm">
+            <label>Inventory Item
+              <select name="inventory_item" required>
+                {% for item in initial_data.items %}
+                <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Garment Type<input name="garment_type" required></label>
+            <label>Label Size<input name="label_size"></label>
+            <label>Chest/Bust<input type="number" step="0.1" name="chest_bust"></label>
+            <label>Waist<input type="number" step="0.1" name="waist"></label>
+            <label>Hip<input type="number" step="0.1" name="hip"></label>
+            <label>Inseam<input type="number" step="0.1" name="inseam"></label>
+            <button type="submit" class="btn btn-primary btn-sm">Save Clothing Detail</button>
+          </form>
+        </article>
+      </section>
+
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Fit Profiles</h3>
+          <table class="portal-table">
+            <thead><tr><th>Profile</th><th>Fit</th><th>Privacy</th></tr></thead>
+            <tbody>
+              {% for profile in initial_data.fit_profiles %}
+              <tr>
+                <td><a href="/app/fit-profile/{{ profile.name }}" target="_blank">{{ profile.profile_name }}</a></td>
+                <td>{{ profile.preferred_fit or "-" }}</td>
+                <td>{{ profile.privacy_level or "-" }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="3" class="muted">No fit profiles yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </article>
+
+        <article class="portal-card">
+          <h3>Clothing Details</h3>
+          <table class="portal-table">
+            <thead><tr><th>Item</th><th>Garment</th><th>Size</th><th>Waist</th><th>Inseam</th></tr></thead>
+            <tbody>
+              {% for detail in initial_data.clothing_details %}
+              <tr>
+                <td>{{ detail.inventory_item }}</td>
+                <td>{{ detail.garment_type }}</td>
+                <td>{{ detail.label_size or "-" }}</td>
+                <td>{{ detail.waist or "-" }}</td>
+                <td>{{ detail.inseam or "-" }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" class="muted">No clothing details yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <article class="portal-card">
+        <h3>Fit Estimate</h3>
+        <form id="fitEstimateForm" class="portal-grid">
+          <label>Clothing Detail
+            <select name="clothing_detail" required>
+              {% for detail in initial_data.clothing_details %}
+              <option value="{{ detail.name }}">{{ detail.inventory_item }} • {{ detail.garment_type }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Fit Profile
+            <select name="fit_profile" required>
+              {% for profile in initial_data.fit_profiles %}
+              <option value="{{ profile.name }}">{{ profile.profile_name }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <div><button type="submit" class="btn btn-default btn-sm">Estimate Fit</button></div>
+        </form>
+        <div id="fitEstimateResult" class="muted" style="margin-top:0.7rem;"></div>
+      </article>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}

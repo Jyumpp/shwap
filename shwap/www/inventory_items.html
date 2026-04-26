@@ -1,0 +1,112 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Inventory Items{% endblock %}
+
+{% block page_content %}
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
+    <div>
+      <h1>Inventory Items</h1>
+      <p>Add and manage inventory records with category-aware behavior.</p>
+    </div>
+    <a class="btn btn-default btn-sm" href="/inventory">Back to Dashboard</a>
+  </header>
+
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+
+    <main class="portal-main">
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Quick Add Item</h3>
+          <form id="quickAddForm">
+            <label>Item Name<input name="item_name" required></label>
+            <label>Category
+              <select name="category" required>
+                {% for category in initial_data.categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Location
+              <select name="location" required>
+                {% for location in initial_data.locations %}
+                <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Condition
+              <select name="condition">
+                <option>Excellent</option><option selected>Good</option><option>Fair</option><option>Poor</option>
+              </select>
+            </label>
+            <label>Visibility
+              <select name="visibility">
+                <option selected>Private</option><option>Household</option><option>Specific group</option><option>Public listing only</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary btn-sm">Add Item</button>
+          </form>
+        </article>
+
+        <article class="portal-card">
+          <h3>Search</h3>
+          <form id="searchForm">
+            <label>Query<input name="query" placeholder="name, model, serial"></label>
+            <label>Status
+              <select name="status">
+                <option value="">Any</option>
+                <option>Active</option><option>Lent out</option><option>Listed</option><option>Needs repair</option><option>Missing</option>
+              </select>
+            </label>
+            <label>Location
+              <select name="location">
+                <option value="">Any</option>
+                {% for location in initial_data.locations %}
+                <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <button type="submit" class="btn btn-default btn-sm">Run Search</button>
+          </form>
+        </article>
+      </section>
+
+      <article class="portal-card">
+        <h3>My Items</h3>
+        <div id="itemsTableWrap">
+          <table class="portal-table">
+            <thead><tr><th>Item</th><th>Category</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              {% for item in initial_data.items %}
+              <tr>
+                <td><a href="/app/inventory-item/{{ item.name }}" target="_blank">{{ item.item_name }}</a></td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.location }}</td>
+                <td>{{ item.status }}</td>
+                <td class="portal-inline-actions">
+                  <button class="btn btn-default btn-xs" data-prefill-listing="{{ item.name }}">List</button>
+                  <button class="btn btn-default btn-xs" data-prefill-lending="{{ item.name }}">Lend</button>
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" class="muted">No items yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}

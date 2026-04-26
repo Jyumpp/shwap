@@ -1,0 +1,79 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Lending{% endblock %}
+
+{% block page_content %}
+<div class="portal-shell" id="shwapPortal" data-page="{{ page_name }}" data-initial='{{ initial_data | tojson }}'>
+  <header class="portal-shell__header">
+    <div>
+      <h1>Lending</h1>
+      <p>Track checkout lifecycle, due dates, and return status.</p>
+    </div>
+    <a class="btn btn-default btn-sm" href="/inventory">Back to Dashboard</a>
+  </header>
+
+  <div class="portal-shell__content">
+    {% include "shwap/templates/includes/inventory_portal_nav.html" %}
+
+    <main class="portal-main">
+      <section class="portal-grid">
+        <article class="portal-card">
+          <h3>Start Lending</h3>
+          <form id="lendingForm">
+            <label>Item
+              <select name="item" id="lendingItem" required>
+                {% for item in initial_data.items %}
+                <option value="{{ item.name }}">{{ item.item_name }} ({{ item.name }})</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Borrower
+              <select name="borrower" required>
+                {% for user in initial_data.users %}
+                <option value="{{ user }}">{{ user }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Due Date<input type="date" name="due_date" required></label>
+            <label>Deposit<input type="number" min="0" step="0.01" name="deposit_amount"></label>
+            <button type="submit" class="btn btn-primary btn-sm">Create Lending</button>
+          </form>
+        </article>
+      </section>
+
+      <article class="portal-card">
+        <h3>Lending Transactions</h3>
+        <table class="portal-table">
+          <thead><tr><th>Item</th><th>Borrower</th><th>Status</th><th>Due</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for tx in initial_data.lending %}
+            <tr>
+              <td><a href="/app/lending-transaction/{{ tx.name }}" target="_blank">{{ tx.inventory_item }}</a></td>
+              <td>{{ tx.borrower }}</td>
+              <td>{{ tx.status }}</td>
+              <td>{{ tx.due_date or "-" }}</td>
+              <td class="portal-inline-actions">
+                <button class="btn btn-default btn-xs" data-lending-status="{{ tx.name }}" data-status="Checked out">Checked out</button>
+                <button class="btn btn-default btn-xs" data-lending-status="{{ tx.name }}" data-status="Returned accepted">Returned</button>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="muted">No lending transactions.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/shwap/css/inventory_portal.css">
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script src="/assets/shwap/js/inventory_portal.js"></script>
+{% endblock %}
